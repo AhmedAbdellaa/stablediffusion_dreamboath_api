@@ -66,6 +66,13 @@ def yamlmodel():
         if args['cut-type'] in ["face","half","close","full"] :
             cut_type = args['cut-type']
 
+    resolution = 512
+    if 'resolution' in  args :
+        try :
+            resolution = int(args['resolution'])
+        except :
+            print("enter valid resolution")
+
     instance_prompt = "secourses"
     if 'instance_prompt' in  args :
         if len(args['instance_prompt'] ) > 2:
@@ -196,6 +203,7 @@ def yamlmodel():
                             "Model_name":"runwayml/stable-diffusion-v1-5",
                             "vae_name":"stabilityai/sd-vae-ft-mse",
                             "output_dir":output_dir,
+                            "resolution":resolution,
                             "lr_scheduler":lr_scheduler,
                             "learning_rate":learning_rate,
                             "lr_warmup_steps":lr_warmup_steps,
@@ -299,21 +307,22 @@ def genrate():
             print("enter valid width")
     train_steps = 800
     model_path= "default"
-    weights_dir_path = os.path.join(app.config["STATIC"],"model_yaml","diffusers","models--runwayml--stable-diffusion-v1-5","snapshots","ded79e214aa69e42c24d3f5ac14b76d568679cc2")
+    weights_dir_path ='./' #os.path.join(app.config["STATIC"],"model_yaml","diffusers","models--runwayml--stable-diffusion-v1-5","snapshots","ded79e214aa69e42c24d3f5ac14b76d568679cc2")
     if 'weights_dir_path' in  args :
+        print(os.path.join(user_folder,'models',args['weights_dir_path'].split('_')[0],args['weights_dir_path'].split('_')[1]))
         try :
-            weihgts_path =os.path.join(user_folder,'models',args['weights_dir_path'].split('_')[0],args['weights_dir_path'].split('_')[1]) 
+            weihgts_path =os.path.join(user_folder,'models',args['weights_dir_path'],args['weights_dir_path'].split('_')[1]) 
             train_steps= args['weights_dir_path'].split('_')[1]
             model_path= args['weights_dir_path']
-            if os.isdir(weihgts_path):
-                print('found_path')
-                weights_dir_path = weihgts_path
-                print(weights_dir_path)
+            # if os.isdir(weihgts_path):
+            print('found_path')
+            weights_dir_path = weihgts_path
+            print(weights_dir_path)
         except :
-            print("enter valid width")
+            print("enter valid weights dir")
 # end args  
     if request.method == "POST" :
-        genrate_save_path=datetime.datetime.strftime(datetime.datetime.now(),"%y-%m-%d&%H-%M-%S")+"_"+str(train_steps)+"_"+secrets.token_urlsafe(6)
+        genrate_save_path=datetime.datetime.strftime(datetime.datetime.now(),"%y-%m-%d--%H-%M-%S")+"_"+str(train_steps)+"_"+secrets.token_urlsafe(6)
         save_dir = os.path.join(user_folder,"genrated_images",genrate_save_path)
         try:
             os.mkdir(save_dir)

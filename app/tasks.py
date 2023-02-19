@@ -40,7 +40,7 @@ def create_json(images_path,photo_path,json_path):
             return True
         
     return False
-def acc_model(Model_name,output_dir,vae_name,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
+def acc_model(Model_name,output_dir,vae_name,resolution,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
                 instance_prompt,class_prompt,images_path,photo_path):
     
     command_str = f"""accelerate launch ./app/train_dreambooth.py \
@@ -50,7 +50,7 @@ def acc_model(Model_name,output_dir,vae_name,learning_rate,lr_scheduler,num_clas
   --revision="fp16" \
   --with_prior_preservation --prior_loss_weight=1.0 \
   --seed=1337 \
-  --resolution=512 \
+  --resolution={resolution} \
   --train_batch_size=1 \
   --train_text_encoder \
   --mixed_precision="fp16" \
@@ -113,11 +113,11 @@ def inferance_model(weights_dir_path,save_dir,
         for index,img in enumerate(images):
             img.save(os.path.join(save_dir,str(index)+".jpg"))
 
-def queue_turn(Model_name,output_dir,vae_name,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
+def queue_turn(Model_name,output_dir,vae_name,resolution,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
                 instance_prompt,class_prompt,images_path,photo_path, weights_dir_path,
 save_dir,prompt, negative_prompt, num_samples, guidance_scale, num_inference_steps, height, width,usr,method):
 
-    mo =  acc_model(Model_name,output_dir,vae_name,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
+    mo =  acc_model(Model_name,output_dir,vae_name,resolution,learning_rate,lr_scheduler,num_class,train_step,lr_warmup_steps,save_sample_prompt,
                 instance_prompt,class_prompt,images_path,photo_path)
     # if "Error" not in mo :
     #     print("inf")
